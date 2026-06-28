@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" id="htmlRoot">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EVO — Mode Moderne</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:      #0A0A0A;
+      --surface:    #111111;
+      --surface2:   #181818;
+      --border:     #222222;
+      --stone:      #5A5550;
+      --warm:       #F0EDE8;
+      --warm-dim:   rgba(240,237,232,0.55);
+      --copper:     #D4622A;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', 'Noto Naskh Arabic', sans-serif;
+      background: var(--black);
+      color: var(--warm);
+      overflow-x: hidden;
+    }
+
+    /* Arabic font for AR mode */
+    [lang="ar"] body,
+    html[lang="ar"] { font-family: 'Noto Naskh Arabic', sans-serif; }
+    html[lang="ar"] .nav-logo,
+    html[lang="ar"] .section-heading,
+    html[lang="ar"] .hero-title,
+    html[lang="ar"] .cat-name,
+    html[lang="ar"] .product-name,
+    html[lang="ar"] .footer-brand { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0 !important; }
+
+    /* RTL flip for Arabic */
+    html[dir="rtl"] nav           { flex-direction: row-reverse; }
+    html[dir="rtl"] .nav-links    { flex-direction: row-reverse; }
+    html[dir="rtl"] .nav-right    { flex-direction: row-reverse; }
+    html[dir="rtl"] .hero-content { margin-right: 0; }
+    html[dir="rtl"] .hero-stats   { right: auto; left: 3rem; }
+    html[dir="rtl"] .stat         { text-align: left; }
+    html[dir="rtl"] .hero-eyebrow { flex-direction: row-reverse; }
+    html[dir="rtl"] .hero-eyebrow::before { display: none; }
+    html[dir="rtl"] .hero-eyebrow::after  { content: ''; display: block; width: 32px; height: 1px; background: var(--copper); }
+    html[dir="rtl"] .cat-header   { flex-direction: row-reverse; }
+    html[dir="rtl"] .products-top { flex-direction: row-reverse; }
+    html[dir="rtl"] .cat-arrow    { right: auto; left: 2rem; transform: scaleX(-1); }
+    html[dir="rtl"] .cat-card:hover .cat-arrow { transform: scaleX(-1) translate(-3px,-3px); }
+    html[dir="rtl"] .brand-strip  { flex-direction: row-reverse; }
+    html[dir="rtl"] .newsletter   { flex-direction: row-reverse; }
+    html[dir="rtl"] .nl-form      { flex-direction: row-reverse; }
+    html[dir="rtl"] .nl-form input  { border-right: 1px solid var(--border); border-left: none; border-radius: 0 2px 2px 0; }
+    html[dir="rtl"] .nl-form button { border-radius: 2px 0 0 2px; }
+    html[dir="rtl"] .footer-grid  { direction: rtl; }
+    html[dir="rtl"] .footer-socials { flex-direction: row-reverse; }
+    html[dir="rtl"] .footer-bottom { flex-direction: row-reverse; }
+    html[dir="rtl"] .mobile-menu a { direction: rtl; }
+    html[dir="rtl"] .hero-title .line-outline { -webkit-text-stroke: 1.5px var(--warm); }
+    html[dir="rtl"] .marquee-track { animation-direction: reverse; }
+    html[dir="rtl"] .filters { flex-direction: row-reverse; }
+
+    /* ─── LANG SWITCHER ───────────────────────────────── */
+    .lang-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: flex-end;
+      align-items: center; padding: 0.45rem 3rem;
+      gap: 0.4rem;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+    }
+    html[dir="rtl"] .lang-bar { justify-content: flex-start; }
+    .lang-btn {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: none; border: 1px solid var(--border);
+      color: var(--stone); cursor: pointer;
+      padding: 0.28rem 0.75rem; border-radius: 2px;
+      transition: all 0.2s;
+    }
+    .lang-btn:hover      { color: var(--warm); border-color: var(--stone); }
+    .lang-btn.active     { background: var(--copper); border-color: var(--copper); color: var(--warm); }
+    .lang-btn[data-lang="ar"] { font-family: 'Noto Naskh Arabic', sans-serif; font-size: 0.8rem; letter-spacing: 0; }
+
+    /* ─── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 34px; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(10,10,10,0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem; font-weight: 700;
+      letter-spacing: 0.22em; color: var(--warm);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--copper); }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--warm-dim); text-decoration: none; transition: color 0.2s;
+    }
+    html[lang="ar"] .nav-links a { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; font-size: 0.9rem; text-transform: none; }
+    .nav-links a:hover { color: var(--warm); }
+    .nav-right { display: flex; align-items: center; gap: 1.4rem; }
+    .nav-icon-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--warm-dim); font-size: 1rem;
+      transition: color 0.2s; padding: 0; line-height: 1;
+    }
+    .nav-icon-btn:hover { color: var(--warm); }
+    .nav-cart {
+      font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: var(--copper); color: var(--warm);
+      border: none; cursor: pointer;
+      padding: 0.6rem 1.2rem; border-radius: 2px;
+      transition: background 0.2s; white-space: nowrap;
+    }
+    .nav-cart:hover { background: #b8521f; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--warm); border-radius: 2px; }
+
+    /* ─── HERO ────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 150px 3rem 5rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-ghost {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(18vw, 26vw, 32vw);
+      font-weight: 700; letter-spacing: -0.02em;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(240,237,232,0.05);
+      user-select: none; pointer-events: none;
+      white-space: nowrap; line-height: 1;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 700px; }
+    .hero-eyebrow {
+      font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.26em; text-transform: uppercase;
+      color: var(--copper); margin-bottom: 1.6rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 32px; height: 1px; background: var(--copper); }
+    html[lang="ar"] .hero-eyebrow { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; font-size: 0.9rem; text-transform: none; }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 700; line-height: 0.95;
+      letter-spacing: -0.03em; color: var(--warm);
+      margin-bottom: 2rem;
+    }
+    html[lang="ar"] .hero-title { font-family: 'Noto Naskh Arabic', sans-serif; line-height: 1.3; letter-spacing: 0; font-size: clamp(2.2rem, 5vw, 4.5rem); }
+    .hero-title .line-accent { color: var(--copper); display: block; }
+    .hero-title .line-outline { color: transparent; -webkit-text-stroke: 1.5px var(--warm); display: block; }
+    .hero-desc {
+      font-size: 1rem; line-height: 1.75; font-weight: 300;
+      color: var(--warm-dim); max-width: 420px; margin-bottom: 3rem;
+    }
+    html[lang="ar"] .hero-desc { font-family: 'Noto Naskh Arabic', sans-serif; line-height: 2; font-size: 1.05rem; }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    .btn-primary {
+      font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      background: var(--copper); color: var(--warm);
+      border: none; cursor: pointer; padding: 1rem 2rem; border-radius: 2px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    html[lang="ar"] .btn-primary { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.95rem; }
+    .btn-primary:hover { background: #b8521f; transform: translateY(-1px); }
+    .btn-ghost {
+      font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+      background: transparent; color: var(--warm-dim);
+      border: 1px solid var(--border); cursor: pointer;
+      padding: 1rem 2rem; border-radius: 2px; transition: all 0.2s;
+    }
+    html[lang="ar"] .btn-ghost { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.95rem; }
+    .btn-ghost:hover { border-color: var(--warm-dim); color: var(--warm); }
+    .hero-stats {
+      position: absolute; bottom: 4rem; right: 3rem;
+      display: flex; gap: 3rem; z-index: 2;
+    }
+    .stat { text-align: right; }
+    html[dir="rtl"] .stat { text-align: left; }
+    .stat-number { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--warm); line-height: 1; }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--stone); margin-top: 0.3rem; }
+    html[lang="ar"] .stat-label { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.82rem; }
+
+    /* ─── MARQUEE ─────────────────────────────────────── */
+    .marquee { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1rem 0; overflow: hidden; }
+    .marquee-track { display: inline-flex; gap: 0; animation: scroll 30s linear infinite; white-space: nowrap; }
+    html[dir="rtl"] .marquee-track { animation-direction: reverse; }
+    .marquee-item {
+      font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--stone); padding: 0 2.5rem;
+      display: inline-flex; align-items: center; gap: 2.5rem;
+    }
+    html[lang="ar"] .marquee-item { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.85rem; }
+    .marquee-item::after { content: '×'; color: var(--copper); font-size: 0.6rem; }
+    @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ─── SECTION COMMONS ─────────────────────────────── */
+    .section-label {
+      font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--copper); margin-bottom: 0.7rem;
+    }
+    html[lang="ar"] .section-label { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.85rem; }
+    .section-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; color: var(--warm);
+    }
+    html[lang="ar"] .section-heading { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; line-height: 1.4; }
+
+    /* ─── CATEGORIES ──────────────────────────────────── */
+    .categories { padding: 6rem 3rem; background: var(--black); }
+    .cat-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; }
+    .cat-link {
+      font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--stone); text-decoration: none; transition: color 0.2s;
+    }
+    html[lang="ar"] .cat-link { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.88rem; }
+    .cat-link:hover { color: var(--copper); }
+    .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .cat-card {
+      background: var(--surface); padding: 3rem 2rem;
+      position: relative; overflow: hidden; cursor: pointer;
+      transition: background 0.25s; display: flex; flex-direction: column; justify-content: space-between; min-height: 280px;
+    }
+    .cat-card:hover { background: var(--surface2); }
+    .cat-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--copper); transition: width 0.35s ease; }
+    .cat-card:hover::after { width: 100%; }
+    .cat-icon { width: 48px; height: 48px; border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: auto; color: var(--copper); font-size: 1.2rem; }
+    .cat-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; color: var(--warm); margin-bottom: 0.4rem; margin-top: 2.5rem; }
+    html[lang="ar"] .cat-name { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; line-height: 1.4; }
+    .cat-count { font-size: 0.78rem; color: var(--stone); letter-spacing: 0.06em; }
+    html[lang="ar"] .cat-count { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; }
+    .cat-arrow { position: absolute; top: 2rem; right: 2rem; font-size: 1.2rem; color: var(--border); transition: color 0.2s, transform 0.2s; }
+    .cat-card:hover .cat-arrow { color: var(--copper); transform: translate(3px,-3px); }
+
+    /* ─── PRODUCTS ────────────────────────────────────── */
+    .products { padding: 6rem 3rem; background: var(--surface); border-top: 1px solid var(--border); }
+    .products-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; gap: 1.5rem; flex-wrap: wrap; }
+    .filters { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .filter-btn {
+      font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+      background: none; border: 1px solid var(--border); color: var(--stone);
+      cursor: pointer; padding: 0.45rem 1.1rem; border-radius: 2px; transition: all 0.2s;
+    }
+    html[lang="ar"] .filter-btn { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.88rem; }
+    .filter-btn:hover, .filter-btn.active { background: var(--copper); border-color: var(--copper); color: var(--warm); }
+    .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .product-card { background: var(--surface); cursor: pointer; transition: background 0.2s; position: relative; overflow: hidden; }
+    .product-card:hover { background: var(--surface2); }
+    .product-img { aspect-ratio: 3/4; background: var(--surface2); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .product-img svg { transition: transform 0.5s ease; }
+    .product-card:hover .product-img svg { transform: scale(1.05); }
+    .product-badge { position: absolute; top: 1rem; left: 1rem; font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.28rem 0.6rem; border-radius: 1px; }
+    html[dir="rtl"] .product-badge { left: auto; right: 1rem; }
+    html[lang="ar"] .product-badge { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.78rem; }
+    .badge-new { background: var(--copper); color: var(--warm); }
+    .badge-sale { background: #1e1e1e; color: #e05555; border: 1px solid #e05555; }
+    .quick-add {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: var(--copper); font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--warm); border: none; cursor: pointer; padding: 0.9rem;
+      transform: translateY(100%); transition: transform 0.25s, background 0.2s;
+    }
+    html[lang="ar"] .quick-add { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.88rem; }
+    .product-card:hover .quick-add { transform: translateY(0); }
+    .quick-add:hover { background: #b8521f; }
+    .product-info { padding: 1.2rem 1.4rem 1.4rem; }
+    html[dir="rtl"] .product-info { text-align: right; }
+    .product-name { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--warm); margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    html[lang="ar"] .product-name { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; line-height: 1.5; }
+    .product-cat { font-size: 0.75rem; color: var(--stone); margin-bottom: 0.7rem; letter-spacing: 0.04em; }
+    html[lang="ar"] .product-cat { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; }
+    .product-price { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--warm); direction: ltr; display: inline-block; }
+    .price-was { text-decoration: line-through; color: var(--stone); font-weight: 400; margin-right: 0.5rem; }
+    .price-now { color: #e05555; }
+
+    /* ─── BRAND STRIP ─────────────────────────────────── */
+    .brand-strip { padding: 5rem 3rem; background: var(--black); display: flex; gap: 3rem; align-items: center; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .brand-strip-text { flex: 1; }
+    .brand-strip-text .section-heading { margin-bottom: 1rem; }
+    .brand-strip-text .section-heading em { font-style: italic; color: var(--copper); }
+    html[lang="ar"] .brand-strip-text .section-heading em { font-style: normal; }
+    .brand-strip-body { font-size: 0.95rem; font-weight: 300; line-height: 1.75; color: var(--warm-dim); max-width: 480px; margin-bottom: 2rem; }
+    html[lang="ar"] .brand-strip-body { font-family: 'Noto Naskh Arabic', sans-serif; line-height: 2; font-size: 1rem; }
+    .brand-strip-values { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+    html[dir="rtl"] .brand-strip-values { flex-direction: row-reverse; }
+    .value-pill { font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--border); color: var(--stone); padding: 0.4rem 1rem; border-radius: 100px; }
+    html[lang="ar"] .value-pill { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.85rem; }
+    .brand-strip-visual { flex: 0 0 280px; height: 280px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; }
+    .brand-big-e { font-family: 'Space Grotesk', sans-serif; font-size: 10rem; font-weight: 700; color: transparent; -webkit-text-stroke: 1px var(--border); line-height: 1; user-select: none; transition: -webkit-text-stroke 0.3s; }
+    .brand-strip-visual:hover .brand-big-e { -webkit-text-stroke: 1px var(--copper); }
+    .brand-strip-visual::before { content: ''; position: absolute; inset: 12px; border: 1px solid var(--border); }
+
+    /* ─── TESTIMONIALS ────────────────────────────────── */
+    .testimonials { padding: 6rem 3rem; background: var(--surface); border-top: 1px solid var(--border); }
+    .testimonials .section-label, .testimonials .section-heading { text-align: center; }
+    .testimonials .section-heading { margin-bottom: 3rem; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .testi-card { background: var(--surface); padding: 2.4rem; }
+    html[dir="rtl"] .testi-card { text-align: right; }
+    .stars { color: var(--copper); font-size: 0.9rem; margin-bottom: 1.2rem; letter-spacing: 3px; }
+    .testi-text { font-size: 0.92rem; line-height: 1.75; font-weight: 300; color: var(--warm-dim); margin-bottom: 1.5rem; font-style: italic; }
+    html[lang="ar"] .testi-text { font-family: 'Noto Naskh Arabic', sans-serif; font-style: normal; line-height: 2; font-size: 0.95rem; }
+    .testi-author { font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif; font-size: 0.8rem; font-weight: 600; color: var(--warm); letter-spacing: 0.06em; }
+    html[lang="ar"] .testi-author { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; }
+    .testi-role { font-size: 0.72rem; color: var(--stone); margin-top: 0.2rem; }
+    html[lang="ar"] .testi-role { font-family: 'Noto Naskh Arabic', sans-serif; }
+
+    /* ─── NEWSLETTER ──────────────────────────────────── */
+    .newsletter { padding: 6rem 3rem; background: var(--black); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 4rem; flex-wrap: wrap; }
+    .nl-left { flex: 1; min-width: 260px; }
+    .nl-left .section-heading { margin-bottom: 0.7rem; }
+    .nl-sub { font-size: 0.9rem; font-weight: 300; color: var(--warm-dim); line-height: 1.6; }
+    html[lang="ar"] .nl-sub { font-family: 'Noto Naskh Arabic', sans-serif; line-height: 2; }
+    .nl-right { flex: 1; min-width: 280px; }
+    .nl-form { display: flex; gap: 0; }
+    .nl-form input { flex: 1; padding: 1rem 1.4rem; background: var(--surface); border: 1px solid var(--border); border-right: none; color: var(--warm); font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; border-radius: 2px 0 0 2px; transition: border-color 0.2s; }
+    .nl-form input::placeholder { color: var(--stone); }
+    .nl-form input:focus { border-color: var(--copper); }
+    .nl-form button { background: var(--copper); color: var(--warm); border: none; cursor: pointer; font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 1rem 1.4rem; border-radius: 0 2px 2px 0; transition: background 0.2s; white-space: nowrap; }
+    html[lang="ar"] .nl-form button { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.9rem; }
+    .nl-form button:hover { background: #b8521f; }
+    .nl-note { font-size: 0.72rem; color: var(--stone); margin-top: 0.8rem; }
+    html[lang="ar"] .nl-note { font-family: 'Noto Naskh Arabic', sans-serif; }
+
+    /* ─── FOOTER ──────────────────────────────────────── */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 4rem 3rem 2rem; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3.5rem; }
+    .footer-brand { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: 0.2em; color: var(--warm); margin-bottom: 0.9rem; }
+    .footer-brand span { color: var(--copper); }
+    .footer-desc { font-size: 0.85rem; font-weight: 300; color: var(--warm-dim); line-height: 1.7; max-width: 240px; margin-bottom: 1.5rem; }
+    html[lang="ar"] .footer-desc { font-family: 'Noto Naskh Arabic', sans-serif; line-height: 2; }
+    .footer-socials { display: flex; gap: 0.7rem; }
+    .fsoc { width: 36px; height: 36px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem; font-weight: 600; color: var(--stone); text-decoration: none; border-radius: 2px; transition: all 0.2s; }
+    .fsoc:hover { border-color: var(--copper); color: var(--copper); }
+    .footer-col h5 { font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--warm); margin-bottom: 1.3rem; }
+    html[lang="ar"] .footer-col h5 { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: 0.9rem; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.75rem; }
+    .footer-col ul a { font-size: 0.83rem; font-weight: 300; color: var(--warm-dim); text-decoration: none; transition: color 0.2s; }
+    html[lang="ar"] .footer-col ul a { font-family: 'Noto Naskh Arabic', sans-serif; font-size: 0.9rem; }
+    .footer-col ul a:hover { color: var(--copper); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-bottom p { font-size: 0.78rem; color: var(--stone); font-weight: 300; }
+    html[lang="ar"] .footer-bottom p { font-family: 'Noto Naskh Arabic', sans-serif; font-size: 0.85rem; }
+
+    /* ─── MOBILE MENU ─────────────────────────────────── */
+    .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--black); z-index: 400; flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; }
+    .mobile-menu.open { display: flex; }
+    html[dir="rtl"] .mobile-menu { direction: rtl; }
+    .mobile-menu a { font-family: 'Space Grotesk', 'Noto Naskh Arabic', sans-serif; font-size: 2rem; font-weight: 700; color: var(--warm); text-decoration: none; letter-spacing: -0.01em; transition: color 0.2s; }
+    html[lang="ar"] .mobile-menu a { font-family: 'Noto Naskh Arabic', sans-serif; letter-spacing: 0; }
+    .mobile-menu a:hover { color: var(--copper); }
+    .mobile-close { position: absolute; top: 1.6rem; right: 2rem; background: none; border: none; cursor: pointer; color: var(--warm-dim); font-size: 1.5rem; }
+    html[dir="rtl"] .mobile-close { right: auto; left: 2rem; }
+
+    /* ─── REVEAL ──────────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ─── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 860px) {
+      nav { padding: 1rem 1.5rem; top: 32px; }
+      .lang-bar { padding: 0.4rem 1.5rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero { padding: 130px 1.5rem 4rem; }
+      .hero-stats { position: static; margin-top: 3rem; flex-direction: row; justify-content: flex-start; }
+      html[dir="rtl"] .hero-stats { justify-content: flex-end; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .testi-grid { grid-template-columns: 1fr; }
+      .brand-strip { flex-direction: column; }
+      html[dir="rtl"] .brand-strip { flex-direction: column; }
+      .brand-strip-visual { width: 100%; flex: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .categories, .products, .testimonials, .newsletter, footer { padding: 4rem 1.5rem; }
+      .brand-strip { padding: 4rem 1.5rem; }
+    }
+    @media (max-width: 540px) {
+      .cat-grid { grid-template-columns: 1fr; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem); }
+      .nl-form { flex-direction: column; }
+      .nl-form input { border-right: 1px solid var(--border); border-bottom: none; border-radius: 2px 2px 0 0; }
+      html[dir="rtl"] .nl-form input { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+      .nl-form button { border-radius: 0 0 2px 2px; }
+      html[dir="rtl"] .nl-form button { border-radius: 0 0 2px 2px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } .reveal { opacity:1; transform:none; transition:none; } }
+  </style>
+</head>
+<body>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="#categories" data-fr="Femmes" data-ar="نساء" data-en="Women">Femmes</a>
+  <a href="#categories" data-fr="Hommes" data-ar="رجال" data-en="Men">Hommes</a>
+  <a href="#categories" data-fr="Accessoires" data-ar="إكسسوارات" data-en="Accessories">Accessoires</a>
+  <a href="#products" data-fr="Nouveautés" data-ar="وصل حديثاً" data-en="New In">Nouveautés</a>
+  <a href="#products" data-fr="Soldes" data-ar="تخفيضات" data-en="Sale">Soldes</a>
+</div>
+
+<!-- LANG BAR -->
+<div class="lang-bar">
+  <button class="lang-btn" data-lang="fr">FR</button>
+  <button class="lang-btn active" data-lang="fr" style="display:none"></button>
+  <button class="lang-btn" data-lang="ar">العربية</button>
+  <button class="lang-btn" data-lang="en">EN</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">EV<span>O</span></a>
+  <ul class="nav-links">
+    <li><a href="#categories" data-fr="Femmes" data-ar="نساء" data-en="Women">Femmes</a></li>
+    <li><a href="#categories" data-fr="Hommes" data-ar="رجال" data-en="Men">Hommes</a></li>
+    <li><a href="#categories" data-fr="Accessoires" data-ar="إكسسوارات" data-en="Accessories">Accessoires</a></li>
+    <li><a href="#products" data-fr="Nouveautés" data-ar="وصل حديثاً" data-en="New In">Nouveautés</a></li>
+    <li><a href="#products" data-fr="Soldes" data-ar="تخفيضات" data-en="Sale">Soldes</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn">⌕</button>
+    <button class="nav-icon-btn">⊙</button>
+    <button class="nav-cart" id="cartBtn" data-fr="Panier (0)" data-ar="السلة (0)" data-en="Bag (0)">Panier (0)</button>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-ghost" aria-hidden="true">EVO</div>
+  <div class="hero-content">
+    <p class="hero-eyebrow" data-fr="Collection SS26" data-ar="مجموعة ربيع/صيف 2026" data-en="SS26 Collection">Collection SS26</p>
+    <h1 class="hero-title">
+      <span data-fr="Porter la" data-ar="ارتدِ" data-en="Wear the">Porter la</span>
+      <span class="line-accent" data-fr="différence." data-ar="الفرق." data-en="difference.">différence.</span>
+      <span class="line-outline" data-fr="La vivre." data-ar="عِشه." data-en="Feel it.">La vivre.</span>
+    </h1>
+    <p class="hero-desc" data-fr="EVO est une mode pensée pour ceux qui avancent avec intention. Chaque pièce est réfléchie — le poids du tissu, la vie de la coupe, la façon dont elle mérite sa place dans votre garde-robe." data-ar="EVO ملابس صُممت لمن يتحرّك بهدف. كل قطعة مدروسة — وزن القماش، خطوط القصة، والطريقة التي تكسب بها مكانها في خزانة ملابسك." data-en="EVO is clothing built for people who move with purpose. Every piece is considered — the weight of the fabric, the life of the cut, the way it earns its place in your wardrobe.">EVO est une mode pensée pour ceux qui avancent avec intention. Chaque pièce est réfléchie — le poids du tissu, la vie de la coupe, la façon dont elle mérite sa place dans votre garde-robe.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" data-fr="Acheter maintenant" data-ar="تسوّق الآن" data-en="Shop Now">Acheter maintenant</button>
+      <button class="btn-ghost" onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})" data-fr="Explorer" data-ar="اكتشف" data-en="Explore">Explorer</button>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-number">340+</div>
+      <div class="stat-label" data-fr="Pièces" data-ar="قطعة" data-en="Pieces">Pièces</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">18K</div>
+      <div class="stat-label" data-fr="Clients" data-ar="عميل" data-en="Customers">Clients</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">4.9★</div>
+      <div class="stat-label" data-fr="Note moyenne" data-ar="متوسط التقييم" data-en="Avg Rating">Note moyenne</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track" id="marqueeTrack">
+    <span class="marquee-item" data-fr="Retours Gratuits" data-ar="إرجاع مجاني" data-en="Free Returns">Retours Gratuits</span>
+    <span class="marquee-item" data-fr="Matériaux Durables" data-ar="مواد مستدامة" data-en="Sustainable Materials">Matériaux Durables</span>
+    <span class="marquee-item" data-fr="Nouvelle Collection SS26" data-ar="مجموعة جديدة 2026" data-en="New SS26 Drop">Nouvelle Collection SS26</span>
+    <span class="marquee-item" data-fr="Livraison gratuite dès 800 DH" data-ar="شحن مجاني من 800 درهم" data-en="Free Shipping Over 800 MAD">Livraison gratuite dès 800 DH</span>
+    <span class="marquee-item" data-fr="Membres: -10%" data-ar="خصم 10% للأعضاء" data-en="Members Save 10%">Membres: -10%</span>
+    <span class="marquee-item" data-fr="Fabriqué Éthiquement" data-ar="صُنع بشكل أخلاقي" data-en="Ethically Made">Fabriqué Éthiquement</span>
+    <span class="marquee-item" data-fr="Retours Gratuits" data-ar="إرجاع مجاني" data-en="Free Returns">Retours Gratuits</span>
+    <span class="marquee-item" data-fr="Matériaux Durables" data-ar="مواد مستدامة" data-en="Sustainable Materials">Matériaux Durables</span>
+    <span class="marquee-item" data-fr="Nouvelle Collection SS26" data-ar="مجموعة جديدة 2026" data-en="New SS26 Drop">Nouvelle Collection SS26</span>
+    <span class="marquee-item" data-fr="Livraison gratuite dès 800 DH" data-ar="شحن مجاني من 800 درهم" data-en="Free Shipping Over 800 MAD">Livraison gratuite dès 800 DH</span>
+    <span class="marquee-item" data-fr="Membres: -10%" data-ar="خصم 10% للأعضاء" data-en="Members Save 10%">Membres: -10%</span>
+    <span class="marquee-item" data-fr="Fabriqué Éthiquement" data-ar="صُنع بشكل أخلاقي" data-en="Ethically Made">Fabriqué Éthiquement</span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories" id="categories">
+  <div class="cat-header reveal">
+    <div>
+      <p class="section-label" data-fr="Acheter par catégorie" data-ar="تسوّق حسب الفئة" data-en="Shop by category">Acheter par catégorie</p>
+      <h2 class="section-heading" data-fr="La Collection" data-ar="المجموعة الكاملة" data-en="The Range">La Collection</h2>
+    </div>
+    <a href="#" class="cat-link" data-fr="Toutes les catégories →" data-ar="← جميع الفئات" data-en="All Categories →">Toutes les catégories →</a>
+  </div>
+  <div class="cat-grid reveal">
+    <div class="cat-card">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3s-3 3.5-6 3.5H4L3 21h18L20 6.5h-2c-3 0-6-3.5-6-3.5z"/></svg></div>
+      <div class="cat-arrow">↗</div>
+      <div><div class="cat-name" data-fr="Femmes" data-ar="نساء" data-en="Women">Femmes</div><div class="cat-count" data-fr="148 articles" data-ar="148 قطعة" data-en="148 items">148 articles</div></div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="8" width="12" height="14" rx="1"/><path d="M6 8L4 3h3l2 3 3-4 3 4 2-3h3l-2 5"/></svg></div>
+      <div class="cat-arrow">↗</div>
+      <div><div class="cat-name" data-fr="Hommes" data-ar="رجال" data-en="Men">Hommes</div><div class="cat-count" data-fr="96 articles" data-ar="96 قطعة" data-en="96 items">96 articles</div></div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div>
+      <div class="cat-arrow">↗</div>
+      <div><div class="cat-name" data-fr="Accessoires" data-ar="إكسسوارات" data-en="Accessories">Accessoires</div><div class="cat-count" data-fr="74 articles" data-ar="74 قطعة" data-en="74 items">74 articles</div></div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8 Q12 4 21 8 L22 20 Q12 24 2 20 Z"/></svg></div>
+      <div class="cat-arrow">↗</div>
+      <div><div class="cat-name" data-fr="Maille" data-ar="ملابس محبوكة" data-en="Knitwear">Maille</div><div class="cat-count" data-fr="52 articles" data-ar="52 قطعة" data-en="52 items">52 articles</div></div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20h16M6 20V10l6-7 6 7v10"/><path d="M10 20v-5h4v5"/></svg></div>
+      <div class="cat-arrow">↗</div>
+      <div><div class="cat-name" data-fr="Manteaux" data-ar="معاطف" data-en="Outerwear">Manteaux</div><div class="cat-count" data-fr="38 articles" data-ar="38 قطعة" data-en="38 items">38 articles</div></div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg></div>
+      <div class="cat-arrow">↗</div>
+      <div><div class="cat-name" data-fr="Soldes" data-ar="تخفيضات" data-en="Sale">Soldes</div><div class="cat-count" data-fr="60 articles" data-ar="60 قطعة" data-en="60 items">60 articles</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+  <div class="products-top reveal">
+    <div>
+      <p class="section-label" data-fr="Nouvelles arrivées" data-ar="وصل حديثاً" data-en="New arrivals">Nouvelles arrivées</p>
+      <h2 class="section-heading" data-fr="Vient de sortir" data-ar="أحدث الإضافات" data-en="Just Dropped">Vient de sortir</h2>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterActive(this)" data-fr="Tout" data-ar="الكل" data-en="All">Tout</button>
+      <button class="filter-btn" onclick="filterActive(this)" data-fr="Femmes" data-ar="نساء" data-en="Women">Femmes</button>
+      <button class="filter-btn" onclick="filterActive(this)" data-fr="Hommes" data-ar="رجال" data-en="Men">Hommes</button>
+      <button class="filter-btn" onclick="filterActive(this)" data-fr="Maille" data-ar="محبوك" data-en="Knitwear">Maille</button>
+      <button class="filter-btn" onclick="filterActive(this)" data-fr="Soldes" data-ar="تخفيضات" data-en="Sale">Soldes</button>
+    </div>
+  </div>
+  <div class="products-grid reveal">
+
+    <div class="product-card">
+      <div class="product-img">
+        <span class="product-badge badge-new" data-fr="Nouveau" data-ar="جديد" data-en="New">Nouveau</span>
+        <svg width="70" height="100" viewBox="0 0 70 100" fill="none"><path d="M35 10 C35 10 23 24 12 24 L8 24 L5 92 L65 92 L62 24 L58 24 C47 24 35 10 35 10Z" stroke="#D4622A" stroke-width="1.2" fill="rgba(212,98,42,0.08)"/></svg>
+        <button class="quick-add" onclick="addToCart(event)" data-fr="Ajouter" data-ar="أضف للسلة" data-en="Quick Add">Ajouter</button>
+      </div>
+      <div class="product-info">
+        <div class="product-name" data-fr="Robe en Lin" data-ar="فستان كتّاني" data-en="Linen Wrap Dress">Robe en Lin</div>
+        <div class="product-cat" data-fr="Femmes · Sable" data-ar="نساء · بيج رملي" data-en="Women · Sand">Femmes · Sable</div>
+        <div class="product-price" data-price="1480">1 480 DH</div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <span class="product-badge badge-sale" data-fr="Solde" data-ar="تخفيض" data-en="Sale">Solde</span>
+        <svg width="65" height="95" viewBox="0 0 65 95" fill="none"><rect x="12" y="30" width="41" height="58" rx="2" stroke="#5A5550" stroke-width="1.2" fill="rgba(90,85,80,0.12)"/><path d="M12 30L5 14 L22 22 L32 12 L42 22 L59 14 L52 30" stroke="#5A5550" stroke-width="1.2" fill="none"/></svg>
+        <button class="quick-add" onclick="addToCart(event)" data-fr="Ajouter" data-ar="أضف للسلة" data-en="Quick Add">Ajouter</button>
+      </div>
+      <div class="product-info">
+        <div class="product-name" data-fr="Chemise Oxford" data-ar="قميص أكسفورد" data-en="Oxford Shirt">Chemise Oxford</div>
+        <div class="product-cat" data-fr="Hommes · Ardoise" data-ar="رجال · رمادي" data-en="Men · Slate">Hommes · Ardoise</div>
+        <div class="product-price"><span class="price-was" data-price="950">950 DH</span><span class="price-now" data-price="620">620 DH</span></div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <svg width="65" height="95" viewBox="0 0 65 95" fill="none"><path d="M5 20 Q32 10 60 20 L63 80 Q32 90 2 80 Z" stroke="#D4622A" stroke-width="1.2" fill="rgba(212,98,42,0.07)"/><path d="M5 40 Q32 30 60 40" stroke="#D4622A" stroke-width="0.8" opacity="0.4"/></svg>
+        <button class="quick-add" onclick="addToCart(event)" data-fr="Ajouter" data-ar="أضف للسلة" data-en="Quick Add">Ajouter</button>
+      </div>
+      <div class="product-info">
+        <div class="product-name" data-fr="Pull en Mérinos" data-ar="سويتر ميرينو" data-en="Merino Knit Sweater">Pull en Mérinos</div>
+        <div class="product-cat" data-fr="Maille · Camel" data-ar="محبوك · كاميل" data-en="Knitwear · Camel">Maille · Camel</div>
+        <div class="product-price" data-price="1750">1 750 DH</div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <span class="product-badge badge-new" data-fr="Nouveau" data-ar="جديد" data-en="New">Nouveau</span>
+        <svg width="60" height="100" viewBox="0 0 60 100" fill="none"><path d="M10 12 L50 12 L55 90 L5 90 Z" stroke="#5A5550" stroke-width="1.2" fill="rgba(90,85,80,0.1)"/><line x1="30" y1="12" x2="30" y2="90" stroke="#5A5550" stroke-width="0.8" opacity="0.4"/></svg>
+        <button class="quick-add" onclick="addToCart(event)" data-fr="Ajouter" data-ar="أضف للسلة" data-en="Quick Add">Ajouter</button>
+      </div>
+      <div class="product-info">
+        <div class="product-name" data-fr="Pantalon Large" data-ar="بنطلون واسع" data-en="Wide-Leg Trousers">Pantalon Large</div>
+        <div class="product-cat" data-fr="Femmes · Anthracite" data-ar="نساء · فحمي" data-en="Women · Charcoal">Femmes · Anthracite</div>
+        <div class="product-price" data-price="1340">1 340 DH</div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <svg width="65" height="95" viewBox="0 0 65 95" fill="none"><rect x="8" y="24" width="49" height="62" rx="2" stroke="#D4622A" stroke-width="1.2" fill="rgba(212,98,42,0.07)"/><path d="M8 38 L57 38" stroke="#D4622A" stroke-width="0.8" opacity="0.4"/><rect x="22" y="14" width="21" height="14" rx="2" stroke="#D4622A" stroke-width="1.2" fill="none"/></svg>
+        <button class="quick-add" onclick="addToCart(event)" data-fr="Ajouter" data-ar="أضف للسلة" data-en="Quick Add">Ajouter</button>
+      </div>
+      <div class="product-info">
+        <div class="product-name" data-fr="Blazer Structuré" data-ar="بليزر مهيكل" data-en="Structured Blazer">Blazer Structuré</div>
+        <div class="product-cat" data-fr="Hommes · Onyx" data-ar="رجال · أونيكس" data-en="Men · Onyx">Hommes · Onyx</div>
+        <div class="product-price" data-price="2950">2 950 DH</div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <span class="product-badge badge-sale" data-fr="Solde" data-ar="تخفيض" data-en="Sale">Solde</span>
+        <svg width="60" height="100" viewBox="0 0 60 100" fill="none"><path d="M30 8 C30 8 20 24 10 26 L7 26 L5 90 L55 90 L53 26 L50 26 C40 24 30 8 30 8Z" stroke="#5A5550" stroke-width="1.2" fill="rgba(90,85,80,0.1)"/></svg>
+        <button class="quick-add" onclick="addToCart(event)" data-fr="Ajouter" data-ar="أضف للسلة" data-en="Quick Add">Ajouter</button>
+      </div>
+      <div class="product-info">
+        <div class="product-name" data-fr="Jupe Midi en Soie" data-ar="تنورة ميدي حريرية" data-en="Silk Midi Skirt">Jupe Midi en Soie</div>
+        <div class="product-cat" data-fr="Femmes · Ivoire" data-ar="نساء · عاجي" data-en="Women · Ivory">Femmes · Ivoire</div>
+        <div class="product-price"><span class="price-was" data-price="1600">1 600 DH</span><span class="price-now" data-price="1100">1 100 DH</span></div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <span class="product-badge badge-new" data-fr="Nouveau" data-ar="جديد" data-en="New">Nouveau</span>
+        <svg width="70" height="85" viewBox="0 0 70 85" fill="none"><path d="M10 25 C10 25 20 18 35 18 C50 18 60 25 60 25 L65 72 Q35 80 5 72 Z" stroke="#D4622A" stroke-width="1.2" fill="rgba(212,98,42,0.07)"/></svg>
+        <button class="quick-add" onclick="addToCart(event)" data-fr="Ajouter" data-ar="أضف للسلة" data-en="Quick Add">Ajouter</button>
+      </div>
+      <div class="product-info">
+        <div class="product-name" data-fr="Col Roulé Cachemire" data-ar="كنزة كاشمير بياقة" data-en="Cashmere Turtleneck">Col Roulé Cachemire</div>
+        <div class="product-cat" data-fr="Maille · Marine" data-ar="محبوك · كحلي" data-en="Knitwear · Navy">Maille · Marine</div>
+        <div class="product-price" data-price="2200">2 200 DH</div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <svg width="65" height="70" viewBox="0 0 65 70" fill="none"><rect x="5" y="18" width="55" height="44" rx="4" stroke="#5A5550" stroke-width="1.2" fill="rgba(90,85,80,0.1)"/><path d="M5 30 L60 30" stroke="#5A5550" stroke-width="0.8" opacity="0.4"/><path d="M20 18 Q20 10 32 10 Q44 10 44 18" stroke="#5A5550" stroke-width="1.2" fill="none"/></svg>
+        <button class="quick-add" onclick="addToCart(event)" data-fr="Ajouter" data-ar="أضف للسلة" data-en="Quick Add">Ajouter</button>
+      </div>
+      <div class="product-info">
+        <div class="product-name" data-fr="Sac Bandoulière" data-ar="حقيبة جلدية" data-en="Leather Crossbody">Sac Bandoulière</div>
+        <div class="product-cat" data-fr="Accessoires · Tan" data-ar="إكسسوارات · بيج" data-en="Accessories · Tan">Accessoires · Tan</div>
+        <div class="product-price" data-price="1850">1 850 DH</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- BRAND STRIP -->
+<div class="brand-strip">
+  <div class="brand-strip-text reveal">
+    <p class="section-label" data-fr="Qui sommes-nous" data-ar="من نحن" data-en="Who we are">Qui sommes-nous</p>
+    <h2 class="section-heading">
+      <span data-fr="Pensé différemment." data-ar="مختلف في التفكير." data-en="Built different.">Pensé différemment.</span><br/>
+      <em data-fr="Conçu pour durer." data-ar="مصمّم ليدوم." data-en="By design.">Conçu pour durer.</em>
+    </h2>
+    <p class="brand-strip-body" data-fr="EVO est né d'une conviction : ce que vous portez doit travailler autant que vous. Nous approvisionnons de façon responsable, coupons avec précision, et nous défendons chaque couture. Pas de tendances éphémères — juste des vêtements qui durent." data-ar="وُلدت EVO من قناعة واحدة: ما ترتديه يجب أن يعمل بجدّك. نختار خاماتنا بمسؤولية، نقصّ بدقة، ونقف خلف كل خيطة. لا مطاردة للموضة — فقط ملابس تدوم." data-en="EVO was founded on a single belief: that what you wear should work as hard as you do. We source responsibly, cut precisely, and stand behind every stitch. No trend-chasing — just clothing that lasts.">EVO est né d'une conviction : ce que vous portez doit travailler autant que vous.</p>
+    <div class="brand-strip-values">
+      <span class="value-pill" data-fr="Approvisionnement Durable" data-ar="مصادر مستدامة" data-en="Sustainably Sourced">Approvisionnement Durable</span>
+      <span class="value-pill" data-fr="Fabrication Éthique" data-ar="صنع أخلاقي" data-en="Ethically Made">Fabrication Éthique</span>
+      <span class="value-pill" data-fr="Neutre en Carbone" data-ar="محايد كربونياً" data-en="Carbon Neutral">Neutre en Carbone</span>
+    </div>
+  </div>
+  <div class="brand-strip-visual reveal">
+    <div class="brand-big-e">E</div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="reveal">
+    <p class="section-label" data-fr="Ce qu'on dit de nous" data-ar="ماذا يقول عملاؤنا" data-en="What people say">Ce qu'on dit de nous</p>
+    <h2 class="section-heading" data-fr="Porté & approuvé" data-ar="ارتديناه وأعجبنا" data-en="Worn & reviewed">Porté & approuvé</h2>
+  </div>
+  <div class="testi-grid reveal">
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text" data-fr="«&nbsp;Je commande chez EVO depuis deux ans. Le pull Mérinos n'a pas boulochė une seule fois. C'est rare aujourd'hui.&nbsp;»" data-ar="«أتسوق من EVO منذ سنتين. السويتر لم يُعطِ أي خيوط حتى الآن. هذا نادر في عصرنا.»" data-en="\"I've been buying EVO pieces for two years. The Merino Sweater hasn't pilled once. That's just not common anymore.\"">«&nbsp;Je commande chez EVO depuis deux ans. Le pull Mérinos n'a pas boulochė une seule fois.&nbsp;»</p>
+      <div class="testi-author" data-fr="Nadia K." data-ar="نادية ك." data-en="Nadia K.">Nadia K.</div>
+      <div class="testi-role" data-fr="Architecte, Casablanca" data-ar="مهندسة معمارية، الدار البيضاء" data-en="Architect, Casablanca">Architecte, Casablanca</div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text" data-fr="«&nbsp;Enfin une marque où 'minimal' veut dire réfléchi. Le blazer est la pièce la mieux coupée que j'ai possédée.&nbsp;»" data-ar="«أخيراً علامة تجارية يعني فيها 'مينيمال' التفكير الحقيقي. البليزر أفضل قطعة امتلكتها.»" data-en="\"Finally a brand where 'minimal' means considered, not boring. The blazer is the best-fitting piece I've owned.\"">«&nbsp;Enfin une marque où 'minimal' veut dire réfléchi. Le blazer est la pièce la mieux coupée.&nbsp;»</p>
+      <div class="testi-author" data-fr="Yassine R." data-ar="ياسين ر." data-en="Yassine R.">Yassine R.</div>
+      <div class="testi-role" data-fr="Directeur Créatif, Rabat" data-ar="مدير إبداعي، الرباط" data-en="Creative Director, Rabat">Directeur Créatif, Rabat</div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text" data-fr="«&nbsp;La robe en lin est arrivée et j'en ai commandé deux autres coloris sur le champ. Le tombé est parfait.&nbsp;»" data-ar="«وصل الفستان الكتّاني فطلبت منه لونين آخرين فوراً. الخامة والقصة مثاليتان.»" data-en="\"The linen dress arrived and I immediately ordered two more colors. The drape is perfect.\"">«&nbsp;La robe en lin est arrivée et j'en ai commandé deux autres coloris. Le tombé est parfait.&nbsp;»</p>
+      <div class="testi-author" data-fr="Sofia M." data-ar="صوفيا م." data-en="Sofia M.">Sofia M.</div>
+      <div class="testi-role" data-fr="Photographe, Marrakech" data-ar="مصوّرة، مراكش" data-en="Photographer, Marrakech">Photographe, Marrakech</div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <div class="nl-left reveal">
+    <p class="section-label" data-fr="Restez informé" data-ar="ابقَ على اطلاع" data-en="Stay in the loop">Restez informé</p>
+    <h2 class="section-heading" data-fr="Les nouveautés,<br/>sans le bruit." data-ar="آخر المستجدات،<br/>بلا ضجيج." data-en="Drop alerts,<br/>no noise.">Les nouveautés,<br/>sans le bruit.</h2>
+    <p class="nl-sub" data-fr="Nouvelles collections, réassorts et ventes privées. Rien d'autre." data-ar="مجموعات جديدة، تجديد المخزون، وتخفيضات حصرية. لا شيء غير ذلك." data-en="New collections, restocks, and member-only sales. Nothing else.">Nouvelles collections, réassorts et ventes privées. Rien d'autre.</p>
+  </div>
+  <div class="nl-right reveal">
+    <div class="nl-form">
+      <input type="email" id="nlEmail" placeholder="votre@email.com" />
+      <button type="button" data-fr="S'abonner" data-ar="اشترك" data-en="Subscribe">S'abonner</button>
+    </div>
+    <p class="nl-note" data-fr="Aucun spam. Désabonnement à tout moment." data-ar="لا رسائل مزعجة. إلغاء الاشتراك في أي وقت." data-en="No spam. Unsubscribe at any time.">Aucun spam. Désabonnement à tout moment.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">EV<span>O</span></div>
+      <p class="footer-desc" data-fr="Des vêtements pour ceux qui avancent avec intention. Des pièces réfléchies, un approvisionnement responsable, un design durable." data-ar="ملابس لمن يتحرّك بهدف. قطع مدروسة، مصادر مسؤولة، تصميم يدوم." data-en="Clothing built for people who move with purpose. Considered pieces, responsible sourcing, lasting design.">Des vêtements pour ceux qui avancent avec intention.</p>
+      <div class="footer-socials">
+        <a class="fsoc" href="#">IG</a>
+        <a class="fsoc" href="#">TK</a>
+        <a class="fsoc" href="#">PT</a>
+        <a class="fsoc" href="#">X</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5 data-fr="Boutique" data-ar="المتجر" data-en="Shop">Boutique</h5>
+      <ul>
+        <li><a href="#" data-fr="Femmes" data-ar="نساء" data-en="Women">Femmes</a></li>
+        <li><a href="#" data-fr="Hommes" data-ar="رجال" data-en="Men">Hommes</a></li>
+        <li><a href="#" data-fr="Accessoires" data-ar="إكسسوارات" data-en="Accessories">Accessoires</a></li>
+        <li><a href="#" data-fr="Maille" data-ar="محبوك" data-en="Knitwear">Maille</a></li>
+        <li><a href="#" data-fr="Soldes" data-ar="تخفيضات" data-en="Sale">Soldes</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5 data-fr="Aide" data-ar="المساعدة" data-en="Help">Aide</h5>
+      <ul>
+        <li><a href="#" data-fr="Guide des tailles" data-ar="دليل المقاسات" data-en="Sizing Guide">Guide des tailles</a></li>
+        <li><a href="#" data-fr="Livraison" data-ar="الشحن" data-en="Shipping">Livraison</a></li>
+        <li><a href="#" data-fr="Retours" data-ar="الإرجاع" data-en="Returns">Retours</a></li>
+        <li><a href="#" data-fr="Contact" data-ar="تواصل معنا" data-en="Contact">Contact</a></li>
+        <li><a href="#" data-fr="FAQ" data-ar="أسئلة شائعة" data-en="FAQ">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5 data-fr="À propos" data-ar="عن EVO" data-en="Company">À propos</h5>
+      <ul>
+        <li><a href="#" data-fr="Notre histoire" data-ar="قصتنا" data-en="Our Story">Notre histoire</a></li>
+        <li><a href="#" data-fr="Durabilité" data-ar="الاستدامة" data-en="Sustainability">Durabilité</a></li>
+        <li><a href="#" data-fr="Carrières" data-ar="وظائف" data-en="Careers">Carrières</a></li>
+        <li><a href="#" data-fr="Presse" data-ar="الصحافة" data-en="Press">Presse</a></li>
+        <li><a href="#" data-fr="Confidentialité" data-ar="سياسة الخصوصية" data-en="Privacy">Confidentialité</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p data-fr="© 2026 EVO. Tous droits réservés." data-ar="© 2026 EVO. جميع الحقوق محفوظة." data-en="© 2026 EVO. All rights reserved.">© 2026 EVO. Tous droits réservés.</p>
+    <p data-fr="Conçu avec intention." data-ar="مصمَّم بعناية." data-en="Designed with intention.">Conçu avec intention.</p>
+  </div>
+</footer>
+
+<script>
+  /* ── LANGUAGE SWITCHER ─────────────────────────────── */
+  const html = document.getElementById('htmlRoot');
+  let currentLang = 'fr';
+
+  const langCfg = {
+    fr: { dir: 'ltr', lang: 'fr', cartLabel: 'Panier', emailPlaceholder: 'votre@email.com', addedMsg: 'Ajouté ✓' },
+    ar: { dir: 'rtl', lang: 'ar', cartLabel: 'السلة',  emailPlaceholder: 'بريدك@الإلكتروني.com', addedMsg: 'أُضيف ✓' },
+    en: { dir: 'ltr', lang: 'en', cartLabel: 'Bag',    emailPlaceholder: 'your@email.com', addedMsg: 'Added ✓' }
+  };
+
+  function setLang(lang) {
+    currentLang = lang;
+    const cfg = langCfg[lang];
+    html.setAttribute('lang', cfg.lang);
+    html.setAttribute('dir', cfg.dir);
+
+    // Translate all data-* elements
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+      const val = el.getAttribute('data-' + lang);
+      if (val === null) return;
+      if (el.tagName === 'INPUT') {
+        el.placeholder = val;
+      } else if (el.classList.contains('hero-title') || el.classList.contains('section-heading')) {
+        // headings: spans inside, handled separately
+      } else {
+        el.innerHTML = val;
+      }
+    });
+
+    // Update cart button text keeping count
+    const cartBtn = document.getElementById('cartBtn');
+    cartBtn.textContent = cfg.cartLabel + ' (' + cartCount + ')';
+
+    // Email placeholder
+    const nlEmail = document.getElementById('nlEmail');
+    if (nlEmail) nlEmail.placeholder = cfg.emailPlaceholder;
+
+    // Lang buttons active state
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-lang') === lang && b.style.display !== 'none');
+    });
+
+    // Fix visible lang buttons
+    document.querySelectorAll('.lang-btn[style="display:none"]').forEach(b => { b.style.display = ''; });
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    if (btn.style.display === 'none') return;
+    btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
+  });
+
+  // Remove the duplicate hidden button hack
+  document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+    if (i === 1) btn.remove(); // remove the placeholder
+  });
+  // Set FR active on load
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-lang') === 'fr');
+  });
+
+  /* ── MOBILE MENU ───────────────────────────────────── */
+  document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+  document.getElementById('mobileClose').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+  document.querySelectorAll('#mobileMenu a').forEach(a => a.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open')));
+
+  /* ── CART ──────────────────────────────────────────── */
+  let cartCount = 0;
+  window.addToCart = function(e) {
+    cartCount++;
+    const cfg = langCfg[currentLang];
+    document.getElementById('cartBtn').textContent = cfg.cartLabel + ' (' + cartCount + ')';
+    const btn = e.currentTarget;
+    const orig = btn.getAttribute('data-' + currentLang) || btn.textContent;
+    btn.textContent = cfg.addedMsg;
+    btn.style.background = '#2a6e45';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 1500);
+  };
+
+  /* ── FILTERS ───────────────────────────────────────── */
+  window.filterActive = function(btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  };
+
+  /* ── SCROLL REVEAL ─────────────────────────────────── */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
